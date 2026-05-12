@@ -1,1 +1,396 @@
-undefined
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anamnese Nutricional — NEXUS CLIN</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', Arial, sans-serif;
+      background: #FAF8F3;
+      color: #0B1F3A;
+      min-height: 100vh;
+    }
+    .header {
+      background: #0B1F3A;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-bar { background: #C9A84C; width: 6px; height: 36px; border-radius: 3px; flex-shrink: 0; }
+    .header-title { font-size: 18px; font-weight: 600; color: #fff; letter-spacing: 0.03em; }
+    .header-sub { font-size: 10px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px; }
+    .progress-wrap { background: #0B1F3A; padding: 0 24px 14px; }
+    .progress-labels { display: flex; justify-content: space-between; margin-bottom: 6px; }
+    .progress-label { font-size: 10px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.06em; transition: color .3s; }
+    .progress-label.active { color: #C9A84C; }
+    .progress-track { height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; }
+    .progress-fill { height: 100%; background: #C9A84C; border-radius: 2px; transition: width .4s ease; }
+    #navBar {
+      position: sticky; top: 0; z-index: 100;
+      background: #fff;
+      border-bottom: 1px solid #e8e4d8;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    }
+    .nav-step-info { font-size: 12px; color: #7a8fa8; }
+    .nav-step-name { font-size: 14px; font-weight: 600; color: #0B1F3A; margin-top: 1px; }
+    .btn-back {
+      background: none; border: 1px solid #d4cfc4; color: #7a8fa8;
+      padding: 8px 16px; border-radius: 8px; font-size: 13px; font-family: inherit;
+      cursor: pointer; transition: all .2s;
+    }
+    .btn-back:hover { background: #f5f3ee; color: #0B1F3A; }
+    .btn-next {
+      background: #C9A84C; color: #fff; border: none;
+      padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 600;
+      font-family: inherit; cursor: pointer; transition: all .2s;
+    }
+    .btn-next:hover { background: #b8973e; }
+    .btn-next:disabled { background: #ccc; cursor: not-allowed; }
+    .content { max-width: 680px; margin: 0 auto; padding: 28px 20px 60px; }
+    .step { display: none; }
+    .step.active { display: block; }
+    .step-title { font-size: 22px; font-weight: 700; color: #0B1F3A; margin-bottom: 6px; }
+    .step-desc { font-size: 14px; color: #7a8fa8; margin-bottom: 28px; line-height: 1.5; }
+    .card {
+      background: #fff; border: 1px solid #e8e4d8; border-radius: 12px;
+      padding: 20px; margin-bottom: 16px;
+    }
+    .card-label {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+      color: #7a8fa8; margin-bottom: 10px; font-weight: 500;
+    }
+    .radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .radio-opt {
+      padding: 8px 16px; border: 1.5px solid #e8e4d8; border-radius: 20px;
+      font-size: 13px; cursor: pointer; transition: all .2s; user-select: none;
+      color: #3d5068; background: #fff;
+    }
+    .radio-opt.selected { background: #0B1F3A; color: #fff; border-color: #0B1F3A; }
+    .field-label {
+      font-size: 12px; font-weight: 500; color: #7a8fa8;
+      margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    input[type="text"], input[type="time"], textarea, select {
+      width: 100%; padding: 10px 14px; border: 1.5px solid #e8e4d8;
+      border-radius: 8px; font-size: 14px; font-family: inherit;
+      color: #0B1F3A; background: #fff; outline: none;
+      transition: border-color .2s;
+    }
+    input[type="text"]:focus, input[type="time"]:focus, textarea:focus { border-color: #C9A84C; }
+    textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .meal-card {
+      background: #FAF8F3; border: 1px solid #e8e4d8; border-radius: 10px;
+      padding: 16px; margin-bottom: 12px; position: relative;
+    }
+    .meal-card-header {
+      font-size: 13px; font-weight: 600; color: #0B1F3A;
+      margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+    }
+    .meal-num {
+      background: #C9A84C; color: #fff; width: 22px; height: 22px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+    }
+    .btn-remove-meal {
+      position: absolute; top: 12px; right: 12px;
+      background: none; border: none; color: #aaa; font-size: 18px;
+      cursor: pointer; line-height: 1;
+    }
+    .btn-remove-meal:hover { color: #e55; }
+    .btn-add-meal {
+      width: 100%; padding: 10px; border: 1.5px dashed #C9A84C;
+      background: none; border-radius: 8px; color: #C9A84C;
+      font-size: 14px; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: all .2s;
+    }
+    .btn-add-meal:hover { background: #fdf6e3; }
+    .check-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .check-opt {
+      padding: 8px 14px; border: 1.5px solid #e8e4d8; border-radius: 8px;
+      font-size: 13px; cursor: pointer; transition: all .2s; user-select: none; color: #3d5068;
+    }
+    .check-opt.selected { background: #0B1F3A; color: #fff; border-color: #0B1F3A; }
+    #successScreen { display: none; max-width: 480px; margin: 60px auto; padding: 20px; text-align: center; }
+    .success-icon {
+      width: 72px; height: 72px; background: #C9A84C; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; font-size: 32px; color: #fff;
+    }
+    .success-title { font-size: 24px; font-weight: 700; color: #0B1F3A; margin-bottom: 8px; }
+    .success-msg { font-size: 15px; color: #7a8fa8; line-height: 1.6; }
+    .footer {
+      background: #0B1F3A; padding: 14px 24px; text-align: center;
+      font-size: 11px; color: rgba(255,255,255,0.4);
+      position: fixed; bottom: 0; left: 0; right: 0;
+    }
+    @media (max-width: 500px) { .row-2 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="header">
+  <div class="header-bar"></div>
+  <div>
+    <div class="header-title">NEXUS CLIN</div>
+    <div class="header-sub">Anamnese Nutricional</div>
+  </div>
+</div>
+<div class="progress-wrap" id="progressBar">
+  <div class="progress-labels">
+    <span class="progress-label active" id="lbl-1">Rotina</span>
+    <span class="progress-label" id="lbl-2">Preferências</span>
+    <span class="progress-label" id="lbl-3">Refeições</span>
+    <span class="progress-label" id="lbl-4">Semana/FDS</span>
+    <span class="progress-label" id="lbl-5">Extras</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill" style="width:20%"></div>
+  </div>
+</div>
+<div id="navBar">
+  <div>
+    <div class="nav-step-info" id="navStepInfo">Passo 1 de 5</div>
+    <div class="nav-step-name" id="navStepName">Rotina Diária</div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button class="btn-back" id="btnBack" onclick="prevStep()" style="display:none">&#8592; Voltar</button>
+    <button class="btn-next" id="btnNext" onclick="nextStep()">Próximo &#8594;</button>
+  </div>
+</div>
+<div class="content">
+  <div class="step active" id="step1">
+    <div class="step-title">Rotina Diária</div>
+    <div class="step-desc">Conte-nos um pouco sobre o seu dia a dia para que possamos criar um plano alimentar personalizado.</div>
+    <div class="card">
+      <div class="card-label">Quem prepara suas refeições?</div>
+      <div class="radio-group" id="preparo">
+        <span class="radio-opt" data-val="Eu mesmo(a)">Eu mesmo(a)</span>
+        <span class="radio-opt" data-val="Outra pessoa da casa">Outra pessoa da casa</span>
+        <span class="radio-opt" data-val="Marmita / Delivery">Marmita / Delivery</span>
+        <span class="radio-opt" data-val="Restaurante">Restaurante</span>
+        <span class="radio-opt" data-val="Misto">Misto</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Pratica atividade física?</div>
+      <div class="radio-group" id="atividade">
+        <span class="radio-opt" data-val="Não">Não</span>
+        <span class="radio-opt" data-val="Sim – musculação">Sim – musculação</span>
+        <span class="radio-opt" data-val="Sim – aeróbico">Sim – aeróbico</span>
+        <span class="radio-opt" data-val="Sim – misto">Sim – misto</span>
+        <span class="radio-opt" data-val="Sim – esporte">Sim – esporte</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Horário de trabalho / ocupação</div>
+      <div class="row-2">
+        <div><div class="field-label">Início</div><input type="time" id="horario_inicio"></div>
+        <div><div class="field-label">Fim</div><input type="time" id="horario_fim"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Descreva sua rotina diária</div>
+      <textarea id="rotina_detalhe" placeholder="Ex: Acordo às 6h, trabalho das 8h às 18h, tenho 1h de almoço..."></textarea>
+    </div>
+  </div>
+  <div class="step" id="step2">
+    <div class="step-title">Preferências Alimentares</div>
+    <div class="step-desc">Seus gostos e aversões são fundamentais para um plano que você realmente consiga seguir.</div>
+    <div class="card">
+      <div class="card-label">O que você NÃO gosta de comer?</div>
+      <textarea id="nao_gosta" placeholder="Ex: fígado, couve, brócolis, feijão preto..."></textarea>
+    </div>
+    <div class="card">
+      <div class="card-label">O que você ADORA comer?</div>
+      <textarea id="gosta" placeholder="Ex: frango grelhado, arroz, frutas, iogurte..."></textarea>
+    </div>
+    <div class="card">
+      <div class="card-label">Como é o seu jantar habitualmente?</div>
+      <div class="radio-group" id="jantar_tipo">
+        <span class="radio-opt" data-val="Refeição completa">Refeição completa</span>
+        <span class="radio-opt" data-val="Refeição leve">Refeição leve</span>
+        <span class="radio-opt" data-val="Só um lanche">Só um lanche</span>
+        <span class="radio-opt" data-val="Quase não janto">Quase não janto</span>
+        <span class="radio-opt" data-val="Varia muito">Varia muito</span>
+      </div>
+    </div>
+  </div>
+  <div class="step" id="step3">
+    <div class="step-title">Refeições do Dia</div>
+    <div class="step-desc">Registre todas as suas refeições de um dia típico — incluindo pequenos beliscos.</div>
+    <div id="refeicoes-container"></div>
+    <button class="btn-add-meal" onclick="addMeal()">+ Adicionar refeição</button>
+  </div>
+  <div class="step" id="step4">
+    <div class="step-title">Semana e Final de Semana</div>
+    <div class="step-desc">Entender como é seu fim de semana nos ajuda a criar um plano mais realista.</div>
+    <div class="card">
+      <div class="card-label">Sua alimentação muda no final de semana?</div>
+      <div class="radio-group" id="fds_muda">
+        <span class="radio-opt" data-val="Não, é igual">Não, é igual</span>
+        <span class="radio-opt" data-val="Sim, como mais">Sim, como mais</span>
+        <span class="radio-opt" data-val="Sim, como pior">Sim, como pior</span>
+        <span class="radio-opt" data-val="Depende do final de semana">Depende</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Descreva como é sua alimentação no FDS</div>
+      <textarea id="fds_desc" placeholder="Ex: Saio para comer fora, faço churrasco, bebo álcool..."></textarea>
+    </div>
+    <div class="card">
+      <div class="card-label">Infraestrutura disponível (marque os que tem)</div>
+      <div class="check-group" id="infra">
+        <span class="check-opt" data-val="Fogão">Fogão</span>
+        <span class="check-opt" data-val="Forno">Forno</span>
+        <span class="check-opt" data-val="Micro-ondas">Micro-ondas</span>
+        <span class="check-opt" data-val="Air fryer">Air fryer</span>
+        <span class="check-opt" data-val="Geladeira">Geladeira</span>
+        <span class="check-opt" data-val="Freezer">Freezer</span>
+        <span class="check-opt" data-val="Liquidificador">Liquidificador</span>
+        <span class="check-opt" data-val="Balança">Balança</span>
+      </div>
+    </div>
+  </div>
+  <div class="step" id="step5">
+    <div class="step-title">Observações Finais</div>
+    <div class="step-desc">Há algo mais que queira que a nutricionista saiba antes de elaborar seu plano?</div>
+    <div class="card">
+      <div class="card-label">Observações, objetivos ou informações extras</div>
+      <textarea id="obs_extras" rows="6" placeholder="Ex: Tenho intolerância a lactose, quero emagrecer 5kg, tenho gastrite..."></textarea>
+    </div>
+  </div>
+</div>
+<div id="successScreen">
+  <div class="success-icon">&#10003;</div>
+  <div class="success-title">Anamnese enviada!</div>
+  <div class="success-msg">Suas respostas foram recebidas com sucesso.<br>A nutricionista entrará em contato em breve com seu plano alimentar personalizado.</div>
+</div>
+<div class="footer">NEXUS CLIN &middot; Livramento-PB &middot; Sosthenes dos Santos Alves &middot; COREN-PB 568176</div>
+<script>
+  var currentStep = 1;
+  var TOTAL_STEPS = 5;
+  var stepNames = ['Rotina Diária','Preferências Alimentares','Refeições do Dia','Semana e FDS','Observações Finais'];
+  var mealCount = 0;
+  var mealNames = ['Café da manhã','Lanche da manhã','Almoço','Lanche da tarde','Jantar','Ceia'];
+  window.addEventListener('DOMContentLoaded', function() {
+    addMeal();
+    updateNav();
+    initRadios();
+    initChecks();
+  });
+  function initRadios() {
+    document.querySelectorAll('.radio-group').forEach(function(group) {
+      group.querySelectorAll('.radio-opt').forEach(function(opt) {
+        opt.addEventListener('click', function() {
+          group.querySelectorAll('.radio-opt').forEach(function(o) { o.classList.remove('selected'); });
+          opt.classList.add('selected');
+        });
+      });
+    });
+  }
+  function initChecks() {
+    document.querySelectorAll('.check-group').forEach(function(group) {
+      group.querySelectorAll('.check-opt').forEach(function(opt) {
+        opt.addEventListener('click', function() { opt.classList.toggle('selected'); });
+      });
+    });
+  }
+  function radioVal(groupId) {
+    var sel = document.querySelector('#' + groupId + ' .radio-opt.selected');
+    return sel ? sel.dataset.val : '';
+  }
+  function checkVals(groupId) {
+    return Array.from(document.querySelectorAll('#' + groupId + ' .check-opt.selected')).map(function(o) { return o.dataset.val; }).join(', ');
+  }
+  function updateNav() {
+    document.getElementById('navStepInfo').textContent = 'Passo ' + currentStep + ' de ' + TOTAL_STEPS;
+    document.getElementById('navStepName').textContent = stepNames[currentStep - 1];
+    document.getElementById('btnBack').style.display = currentStep > 1 ? 'inline-block' : 'none';
+    document.getElementById('btnNext').textContent = currentStep === TOTAL_STEPS ? 'Enviar ✓' : 'Próximo →';
+    var pct = (currentStep / TOTAL_STEPS) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    for (var i = 1; i <= TOTAL_STEPS; i++) {
+      document.getElementById('lbl-' + i).classList.toggle('active', i === currentStep);
+    }
+  }
+  function nextStep() {
+    if (currentStep === TOTAL_STEPS) { submitForm(); return; }
+    document.getElementById('step' + currentStep).classList.remove('active');
+    currentStep++;
+    document.getElementById('step' + currentStep).classList.add('active');
+    updateNav();
+    window.scrollTo(0, 0);
+  }
+  function prevStep() {
+    if (currentStep === 1) return;
+    document.getElementById('step' + currentStep).classList.remove('active');
+    currentStep--;
+    document.getElementById('step' + currentStep).classList.add('active');
+    updateNav();
+    window.scrollTo(0, 0);
+  }
+  function addMeal() {
+    mealCount++;
+    var idx = mealCount;
+    var suggestedName = mealNames[idx - 1] || ('Refeição ' + idx);
+    var div = document.createElement('div');
+    div.className = 'meal-card';
+    div.innerHTML = '<div class="meal-card-header"><span class="meal-num">' + idx + '</span><span>' + suggestedName + '</span></div><button class="btn-remove-meal" onclick="removeMeal(this)" title="Remover">&times;</button><div class="row-2" style="margin-bottom:10px"><div><div class="field-label">Nome da refeição</div><input type="text" class="ref-nome" placeholder="Ex: Almoço" value="' + suggestedName + '"></div><div><div class="field-label">Horário</div><input type="time" class="ref-hora"></div></div><div style="margin-bottom:10px"><div class="field-label">O que comeu / bebeu?</div><textarea class="ref-desc" rows="2" placeholder="Ex: Arroz, feijão, frango grelhado, salada..."></textarea></div><div class="row-2"><div><div class="field-label">Local</div><input type="text" class="ref-local" placeholder="Ex: casa, trabalho, rua"></div><div><div class="field-label">Beliscou algo depois?</div><input type="text" class="ref-belisco" placeholder="Ex: biscoito, fruta, nada"></div></div>';
+    document.getElementById('refeicoes-container').appendChild(div);
+  }
+  function removeMeal(btn) {
+    var card = btn.closest('.meal-card');
+    if (document.querySelectorAll('#refeicoes-container .meal-card').length > 1) { card.remove(); }
+  }
+  async function submitForm() {
+    var APPS_SCRIPT_URL = 'COLE_SUA_URL_DO_APPS_SCRIPT_AQUI';
+    var refeicoes = Array.from(document.querySelectorAll('#refeicoes-container .meal-card')).map(function(m) {
+      return {
+        nome: m.querySelector('.ref-nome').value || '',
+        hora: m.querySelector('.ref-hora').value || '',
+        desc: m.querySelector('.ref-desc').value || '',
+        local: m.querySelector('.ref-local').value || '',
+        belisco: m.querySelector('.ref-belisco').value || ''
+      };
+    });
+    var payload = {
+      preparo: radioVal('preparo'),
+      atividade: radioVal('atividade'),
+      horario_inicio: document.getElementById('horario_inicio').value,
+      horario_fim: document.getElementById('horario_fim').value,
+      rotina_detalhe: document.getElementById('rotina_detalhe').value,
+      nao_gosta: document.getElementById('nao_gosta').value,
+      gosta: document.getElementById('gosta').value,
+      jantar_tipo: radioVal('jantar_tipo'),
+      refeicoes: refeicoes,
+      infra: checkVals('infra'),
+      fds_muda: radioVal('fds_muda'),
+      fds_desc: document.getElementById('fds_desc').value,
+      obs_extras: document.getElementById('obs_extras').value
+    };
+    var btn = document.getElementById('btnNext');
+    btn.disabled = true;
+    btn.innerHTML = 'Enviando…';
+    try {
+      await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      document.querySelectorAll('.step').forEach(function(s) { s.classList.remove('active'); });
+      document.getElementById('navBar').style.display = 'none';
+      document.getElementById('progressBar').parentElement.parentElement.style.display = 'none';
+      document.getElementById('successScreen').style.display = 'block';
+    } catch(err) {
+      btn.disabled = false;
+      btn.innerHTML = 'Tentar novamente';
+      alert('Erro ao enviar. Verifique sua conexão e tente novamente.');
+    }
+  }
+</script>
+</body>
+</html>
