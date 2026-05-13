@@ -351,7 +351,7 @@
     if (document.querySelectorAll('#refeicoes-container .meal-card').length > 1) { card.remove(); }
   }
   async function submitForm() {
-    var APPS_SCRIPT_URL = 'COLE_SUA_URL_DO_APPS_SCRIPT_AQUI';
+    var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw4QHjpUuGYMM4DbeY2HnBugNCqzZaX97oO8ZMRqnN76Bsig_iCDBEtmRs_gRxtvMgmzw/exec';
     var refeicoes = Array.from(document.querySelectorAll('#refeicoes-container .meal-card')).map(function(m) {
       return {
         nome: m.querySelector('.ref-nome').value || '',
