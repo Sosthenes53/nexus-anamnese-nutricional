@@ -165,10 +165,16 @@
     <button class="btn-next" id="btnNext" onclick="nextStep()">Próximo &#8594;</button>
   </div>
 </div>
+<!-- IDENTIFICAÇÃO -->
+<div class="q-block" style="margin-bottom:1.5rem">
+  <label class="q-label" for="nome_paciente">Nome completo <span class="req">*</span></label>
+  <input type="text" id="nome_paciente" placeholder="Digite seu nome completo" style="font-size:15px;padding:12px 14px">
+</div>
+<!-- INTRO CARD -->
 <div class="content">
   <div class="step active" id="step1">
     <div class="step-title">Rotina Diária</div>
-    <div class="step-desc">Conte-nos um pouco sobre o seu dia a dia para que possamos criar um plano alimentar personalizado.</div>
+    <div class="step-desc">Este questionário é a base do seu plano alimentar personalizado. As informações que você compartilhar aqui — sua rotina, preferências, horários e hábitos — são o que nos permite criar uma proposta real, que funciona para a sua vida. Leve o tempo que precisar e responda com o máximo de detalhes.</div>
     <div class="card">
       <div class="card-label">Quem prepara suas refeições?</div>
       <div class="radio-group" id="preparo">
@@ -271,7 +277,10 @@
 <div id="successScreen">
   <div class="success-icon">&#10003;</div>
   <div class="success-title">Anamnese enviada!</div>
-  <div class="success-msg">Suas respostas foram recebidas com sucesso.<br>A nutricionista entrará em contato em breve com seu plano alimentar personalizado.</div>
+  <div class="success-msg">Obrigado, <strong id="nome_conclusao"></strong>!<br><br>
+Suas informações foram enviadas com sucesso para nossa equipe, que irá montar o seu plano alimentar personalizado para ser apresentado na sua próxima consulta.<br><br>
+Caso tenha alguma dúvida, fale conosco pelo WhatsApp.<br><br>
+<span style="font-size:12px;color:var(--text-muted)">Obrigado por confiar na NEXUS CLIN. Estamos aqui para essa jornada com você.</span></div>
 </div>
 <div class="footer">NEXUS CLIN &middot; Livramento-PB &middot; Sosthenes dos Santos Alves &middot; COREN-PB 568176</div>
 <script>
@@ -351,6 +360,8 @@
     if (document.querySelectorAll('#refeicoes-container .meal-card').length > 1) { card.remove(); }
   }
   async function submitForm() {
+  document.getElementById('nome_conclusao').textContent =
+    document.getElementById('nome_paciente').value || 'paciente';
     var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw4QHjpUuGYMM4DbeY2HnBugNCqzZaX97oO8ZMRqnN76Bsig_iCDBEtmRs_gRxtvMgmzw/exec';
     var refeicoes = Array.from(document.querySelectorAll('#refeicoes-container .meal-card')).map(function(m) {
       return {
@@ -362,7 +373,8 @@
       };
     });
     var payload = {
-      preparo: radioVal('preparo'),
+      nome_paciente: document.getElementById('nome_paciente').value,
+    preparo: radioVal('preparo'),
       atividade: radioVal('atividade'),
       horario_inicio: document.getElementById('horario_inicio').value,
       horario_fim: document.getElementById('horario_fim').value,
