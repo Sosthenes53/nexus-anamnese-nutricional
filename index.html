@@ -248,28 +248,105 @@ textarea{min-height:88px;resize:vertical;line-height:1.6}
       </div>
     </div>
 
-    <!-- STEP 3: REFEIÇÕES -->
-    <div class="step" id="step3">
-      <div class="section-label">
-        <div class="icon"><svg viewBox="0 0 24 24"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg></div>
-        Alimentação em um dia típico
+   <!-- STEP 3: REFEIÇÕES -->
+<div class="step" id="step3">
+  <div class="section-label">
+    <div class="icon"><svg viewBox="0 0 24 24"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg></div>
+    Alimentação em um dia típico
+  </div>
+  <p style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:6px">Abaixo estão as principais refeições do dia.</p>
+  <div style="background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:1.25rem;font-size:13px;color:var(--text-mid);line-height:1.6">
+    ⚠️ Preencha <strong>apenas as refeições que você realmente tem o hábito de fazer</strong>. Deixe em branco as que não fazem parte da sua rotina.
+  </div>
+  <div id="refeicoes-container">
+    <div class="meal-card">
+      <div class="meal-card-header"><span class="meal-num">☀️ Café da manhã</span></div>
+      <div class="meal-row">
+        <div><span class="field-label">Horário aproximado</span><input type="time" class="ref-hora"></div>
+        <div><span class="field-label">Local</span><input type="text" class="ref-local" placeholder="Ex: casa, trabalho"></div>
       </div>
-      <p style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:1.25rem">Descreva <strong style="color:var(--navy)">todas</strong> as refeições, lanches e beliscadas. Inclua horário e local de cada uma.</p>
-      <div id="refeicoes-container"></div>
-      <button class="add-btn" onclick="addRefeicao()" type="button">
-        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Adicionar refeição
-      </button>
-      <div class="check-card" style="margin-top:1.5rem">
-        <h4>Infraestrutura no local de trabalho / estudo</h4>
-        <div class="pill-group" id="infra-group">
-          <label><input type="checkbox" name="infra" value="Geladeira / frigobar"><span>🧈 Geladeira / frigobar</span></label>
-          <label><input type="checkbox" name="infra" value="Micro-ondas"><span>Micro-ondas</span></label>
-          <label><input type="checkbox" name="infra" value="Nenhum"><span>Nenhum</span></label>
-        </div>
+      <div style="margin-top:10px"><span class="field-label">O que come / bebe?</span>
+        <textarea class="ref-desc" placeholder="Ex: 2 ovos mexidos, pão integral, café com leite sem açúcar, 1 banana..."></textarea>
       </div>
+      <div style="margin-top:10px"><span class="field-label">Belisca algo depois?</span>
+        <input type="text" class="ref-belisco" placeholder="Ex: bolachas, café, amendoim"></div>
+      <input type="hidden" class="ref-nome" value="Café da manhã">
     </div>
-
+    <div class="meal-card">
+      <div class="meal-card-header"><span class="meal-num">🍎 Lanche da manhã</span></div>
+      <div class="meal-row">
+        <div><span class="field-label">Horário aproximado</span><input type="time" class="ref-hora"></div>
+        <div><span class="field-label">Local</span><input type="text" class="ref-local" placeholder="Ex: trabalho, escola"></div>
+      </div>
+      <div style="margin-top:10px"><span class="field-label">O que come / bebe?</span>
+        <textarea class="ref-desc" placeholder="Ex: fruta, iogurte, café, biscoito..."></textarea>
+      </div>
+      <div style="margin-top:10px"><span class="field-label">Belisca algo depois?</span>
+        <input type="text" class="ref-belisco" placeholder="Ex: balas, café"></div>
+      <input type="hidden" class="ref-nome" value="Lanche da manhã">
+    </div>
+    <div class="meal-card">
+      <div class="meal-card-header"><span class="meal-num">🍽️ Almoço</span></div>
+      <div class="meal-row">
+        <div><span class="field-label">Horário aproximado</span><input type="time" class="ref-hora"></div>
+        <div><span class="field-label">Local</span><input type="text" class="ref-local" placeholder="Ex: restaurante, casa, empresa"></div>
+      </div>
+      <div style="margin-top:10px"><span class="field-label">O que come / bebe?</span>
+        <textarea class="ref-desc" placeholder="Ex: arroz, feijão, frango grelhado, salada, suco..."></textarea>
+      </div>
+      <div style="margin-top:10px"><span class="field-label">Belisca algo depois?</span>
+        <input type="text" class="ref-belisco" placeholder="Ex: docinho, café, fruta"></div>
+      <input type="hidden" class="ref-nome" value="Almoço">
+    </div>
+    <div class="meal-card">
+      <div class="meal-card-header"><span class="meal-num">🫐 Lanche da tarde</span></div>
+      <div class="meal-row">
+        <div><span class="field-label">Horário aproximado</span><input type="time" class="ref-hora"></div>
+        <div><span class="field-label">Local</span><input type="text" class="ref-local" placeholder="Ex: trabalho, casa"></div>
+      </div>
+      <div style="margin-top:10px"><span class="field-label">O que come / bebe?</span>
+        <textarea class="ref-desc" placeholder="Ex: tapioca, vitamina, fruta, pão, café..."></textarea>
+      </div>
+      <div style="margin-top:10px"><span class="field-label">Belisca algo depois?</span>
+        <input type="text" class="ref-belisco" placeholder="Ex: bolachas, chocolate"></div>
+      <input type="hidden" class="ref-nome" value="Lanche da tarde">
+    </div>
+    <div class="meal-card">
+      <div class="meal-card-header"><span class="meal-num">🌙 Jantar</span></div>
+      <div class="meal-row">
+        <div><span class="field-label">Horário aproximado</span><input type="time" class="ref-hora"></div>
+        <div><span class="field-label">Local</span><input type="text" class="ref-local" placeholder="Ex: casa, restaurante"></div>
+      </div>
+      <div style="margin-top:10px"><span class="field-label">O que come / bebe?</span>
+        <textarea class="ref-desc" placeholder="Ex: sopa, sanduíche, arroz com carne, omelete..."></textarea>
+      </div>
+      <div style="margin-top:10px"><span class="field-label">Belisca algo depois?</span>
+        <input type="text" class="ref-belisco" placeholder="Ex: sorvete, bolacha, chá"></div>
+      <input type="hidden" class="ref-nome" value="Jantar">
+    </div>
+    <div class="meal-card">
+      <div class="meal-card-header"><span class="meal-num">🌛 Ceia</span></div>
+      <div class="meal-row">
+        <div><span class="field-label">Horário aproximado</span><input type="time" class="ref-hora"></div>
+        <div><span class="field-label">Local</span><input type="text" class="ref-local" placeholder="Ex: casa"></div>
+      </div>
+      <div style="margin-top:10px"><span class="field-label">O que come / bebe?</span>
+        <textarea class="ref-desc" placeholder="Ex: iogurte, fruta, chá, biscoito..."></textarea>
+      </div>
+      <div style="margin-top:10px"><span class="field-label">Belisca algo depois?</span>
+        <input type="text" class="ref-belisco" placeholder="Ex: água, chá"></div>
+      <input type="hidden" class="ref-nome" value="Ceia">
+    </div>
+  </div>
+  <div class="check-card" style="margin-top:1.5rem">
+    <h4>Infraestrutura no local de trabalho / estudo</h4>
+    <div class="pill-group" id="infra-group">
+      <label><input type="checkbox" name="infra" value="Geladeira / frigobar"><span>🧊 Geladeira / frigobar</span></label>
+      <label><input type="checkbox" name="infra" value="Micro-ondas"><span>Micro-ondas</span></label>
+      <label><input type="checkbox" name="infra" value="Nenhum"><span>Nenhum</span></label>
+    </div>
+  </div>
+</div>
     <!-- STEP 4: FINAL DE SEMANA -->
     <div class="step" id="step4">
       <div class="section-label">
@@ -359,7 +436,6 @@ function iniciarFormulario() {
   nomePaciente = nome;
   document.getElementById('welcomeScreen').style.display = 'none';
   document.getElementById('formScreen').classList.add('active');
-  if (refeicaoCount === 0) addRefeicao();
 }
 
 document.getElementById('nome_boas_vindas').addEventListener('keydown', function(e) {
@@ -384,37 +460,6 @@ function initPills() {
   });
 }
 initPills();
-
-// ── MEAL ──
-function addRefeicao() {
-  const n = ++refeicaoCount;
-  const container = document.getElementById('refeicoes-container');
-  const div = document.createElement('div');
-  div.className = 'meal-card';
-  div.id = 'meal-' + n;
-  div.innerHTML = `
-    <div class="meal-card-header">
-      <span class="meal-num">Refeição ${n}</span>
-      ${n > 1 ? '<button class="meal-delete" onclick="this.closest(\'  .meal-card\').remove()" type="button">×</button>' : ''}
-    </div>
-    <div class="meal-row">
-      <div><span class="field-label">Nome da refeição</span>
-        <input type="text" class="ref-nome" placeholder="Ex: Café da manhã, Almoço..."></div>
-      <div><span class="field-label">Horário</span>
-        <input type="time" class="ref-hora"></div>
-    </div>
-    <div><span class="field-label">O que comeu / bebeu?</span>
-      <textarea class="ref-desc" placeholder="Descreva tudo: Ex: 2 ovos, pão, café com leite sem açúcar..."></textarea>
-    </div>
-    <div class="meal-row-3">
-      <div><span class="field-label">Local</span>
-        <input type="text" class="ref-local" placeholder="Ex: casa, trabalho, rua"></div>
-      <div><span class="field-label">Beliscou depois?</span>
-        <input type="text" class="ref-belisco" placeholder="Ex: bolachas, café"></div>
-    </div>`;
-  container.appendChild(div);
-  div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
 
 // ── FDS ──
 function toggleFds(show) {
