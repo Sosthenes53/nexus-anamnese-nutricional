@@ -1,408 +1,554 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anamnese Nutricional — NEXUS CLIN</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'DM Sans', Arial, sans-serif;
-      background: #FAF8F3;
-      color: #0B1F3A;
-      min-height: 100vh;
-    }
-    .header {
-      background: #0B1F3A;
-      padding: 18px 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .header-bar { background: #C9A84C; width: 6px; height: 36px; border-radius: 3px; flex-shrink: 0; }
-    .header-title { font-size: 18px; font-weight: 600; color: #fff; letter-spacing: 0.03em; }
-    .header-sub { font-size: 10px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px; }
-    .progress-wrap { background: #0B1F3A; padding: 0 24px 14px; }
-    .progress-labels { display: flex; justify-content: space-between; margin-bottom: 6px; }
-    .progress-label { font-size: 10px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.06em; transition: color .3s; }
-    .progress-label.active { color: #C9A84C; }
-    .progress-track { height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; }
-    .progress-fill { height: 100%; background: #C9A84C; border-radius: 2px; transition: width .4s ease; }
-    #navBar {
-      position: sticky; top: 0; z-index: 100;
-      background: #fff;
-      border-bottom: 1px solid #e8e4d8;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 20px;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
-    }
-    .nav-step-info { font-size: 12px; color: #7a8fa8; }
-    .nav-step-name { font-size: 14px; font-weight: 600; color: #0B1F3A; margin-top: 1px; }
-    .btn-back {
-      background: none; border: 1px solid #d4cfc4; color: #7a8fa8;
-      padding: 8px 16px; border-radius: 8px; font-size: 13px; font-family: inherit;
-      cursor: pointer; transition: all .2s;
-    }
-    .btn-back:hover { background: #f5f3ee; color: #0B1F3A; }
-    .btn-next {
-      background: #C9A84C; color: #fff; border: none;
-      padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 600;
-      font-family: inherit; cursor: pointer; transition: all .2s;
-    }
-    .btn-next:hover { background: #b8973e; }
-    .btn-next:disabled { background: #ccc; cursor: not-allowed; }
-    .content { max-width: 680px; margin: 0 auto; padding: 28px 20px 60px; }
-    .step { display: none; }
-    .step.active { display: block; }
-    .step-title { font-size: 22px; font-weight: 700; color: #0B1F3A; margin-bottom: 6px; }
-    .step-desc { font-size: 14px; color: #7a8fa8; margin-bottom: 28px; line-height: 1.5; }
-    .card {
-      background: #fff; border: 1px solid #e8e4d8; border-radius: 12px;
-      padding: 20px; margin-bottom: 16px;
-    }
-    .card-label {
-      font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
-      color: #7a8fa8; margin-bottom: 10px; font-weight: 500;
-    }
-    .radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
-    .radio-opt {
-      padding: 8px 16px; border: 1.5px solid #e8e4d8; border-radius: 20px;
-      font-size: 13px; cursor: pointer; transition: all .2s; user-select: none;
-      color: #3d5068; background: #fff;
-    }
-    .radio-opt.selected { background: #0B1F3A; color: #fff; border-color: #0B1F3A; }
-    .field-label {
-      font-size: 12px; font-weight: 500; color: #7a8fa8;
-      margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em;
-    }
-    input[type="text"], input[type="time"], textarea, select {
-      width: 100%; padding: 10px 14px; border: 1.5px solid #e8e4d8;
-      border-radius: 8px; font-size: 14px; font-family: inherit;
-      color: #0B1F3A; background: #fff; outline: none;
-      transition: border-color .2s;
-    }
-    input[type="text"]:focus, input[type="time"]:focus, textarea:focus { border-color: #C9A84C; }
-    textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
-    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .meal-card {
-      background: #FAF8F3; border: 1px solid #e8e4d8; border-radius: 10px;
-      padding: 16px; margin-bottom: 12px; position: relative;
-    }
-    .meal-card-header {
-      font-size: 13px; font-weight: 600; color: #0B1F3A;
-      margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
-    }
-    .meal-num {
-      background: #C9A84C; color: #fff; width: 22px; height: 22px;
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 700; flex-shrink: 0;
-    }
-    .btn-remove-meal {
-      position: absolute; top: 12px; right: 12px;
-      background: none; border: none; color: #aaa; font-size: 18px;
-      cursor: pointer; line-height: 1;
-    }
-    .btn-remove-meal:hover { color: #e55; }
-    .btn-add-meal {
-      width: 100%; padding: 10px; border: 1.5px dashed #C9A84C;
-      background: none; border-radius: 8px; color: #C9A84C;
-      font-size: 14px; font-weight: 600; font-family: inherit;
-      cursor: pointer; transition: all .2s;
-    }
-    .btn-add-meal:hover { background: #fdf6e3; }
-    .check-group { display: flex; flex-wrap: wrap; gap: 8px; }
-    .check-opt {
-      padding: 8px 14px; border: 1.5px solid #e8e4d8; border-radius: 8px;
-      font-size: 13px; cursor: pointer; transition: all .2s; user-select: none; color: #3d5068;
-    }
-    .check-opt.selected { background: #0B1F3A; color: #fff; border-color: #0B1F3A; }
-    #successScreen { display: none; max-width: 480px; margin: 60px auto; padding: 20px; text-align: center; }
-    .success-icon {
-      width: 72px; height: 72px; background: #C9A84C; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 20px; font-size: 32px; color: #fff;
-    }
-    .success-title { font-size: 24px; font-weight: 700; color: #0B1F3A; margin-bottom: 8px; }
-    .success-msg { font-size: 15px; color: #7a8fa8; line-height: 1.6; }
-    .footer {
-      background: #0B1F3A; padding: 14px 24px; text-align: center;
-      font-size: 11px; color: rgba(255,255,255,0.4);
-      position: fixed; bottom: 0; left: 0; right: 0;
-    }
-    @media (max-width: 500px) { .row-2 { grid-template-columns: 1fr; } }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anamnese Nutricional — NEXUS CLIN</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0B1F3A;--navy-mid:#162d4f;--navy-light:#1e3d68;
+  --gold:#C9A84C;--gold-light:#dbbf6e;--gold-pale:#f5edda;
+  --cream:#FAF8F3;--cream-dark:#f0ece1;
+  --green:#1B5E20;--green-mid:#2e7d32;
+  --text-dark:#0B1F3A;--text-mid:#3d5068;--text-muted:#7a8fa8;
+  --border:rgba(11,31,58,0.12);--border-mid:rgba(11,31,58,0.2);
+  --radius:10px;--radius-lg:16px;
+  --shadow-sm:0 1px 4px rgba(11,31,58,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text-dark);min-height:100vh;line-height:1.6}
+.page{max-width:680px;margin:0 auto;padding:2rem 1.25rem 4rem}
+/* BRAND HEADER */
+.brand-header{display:flex;align-items:center;gap:14px;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+.brand-mark{width:46px;height:46px;background:var(--navy);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-mark svg{width:24px;height:24px;fill:var(--gold)}
+.brand-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--navy);letter-spacing:0.02em}
+.brand-sub{font-size:12px;color:var(--text-muted);letter-spacing:0.05em;text-transform:uppercase;margin-top:1px}
+/* WELCOME SCREEN */
+.welcome-screen{animation:fadeIn 0.5s ease}
+.welcome-card{background:var(--navy);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem;position:relative;overflow:hidden}
+.welcome-card::before{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:rgba(201,168,76,0.07)}
+.welcome-card::after{content:'';position:absolute;bottom:-30px;left:-30px;width:120px;height:120px;border-radius:50%;background:rgba(201,168,76,0.05)}
+.welcome-card h1{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:#fff;line-height:1.3;margin-bottom:16px}
+.welcome-card p{font-size:14px;color:rgba(255,255,255,0.7);line-height:1.8;margin-bottom:12px}
+.badge-green{display:inline-flex;align-items:center;gap:5px;background:var(--green-mid);color:#fff;font-size:10px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;padding:4px 10px;border-radius:99px;margin-bottom:14px}
+.name-input-wrap{background:#fff;border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow-sm)}
+.name-input-wrap label{display:block;font-size:13px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px}
+.name-input-big{width:100%;font-family:'DM Sans',sans-serif;font-size:18px;font-weight:400;color:var(--navy);background:transparent;border:none;border-bottom:2px solid var(--border-mid);padding:8px 0;outline:none;transition:border-color 0.2s}
+.name-input-big:focus{border-color:var(--gold)}
+.name-input-big::placeholder{color:var(--text-muted);font-size:15px}
+.btn-start{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;color:#fff;background:var(--navy);border:none;border-radius:var(--radius);padding:14px;cursor:pointer;transition:all 0.2s;margin-top:1rem}
+.btn-start:hover{background:var(--navy-light)}
+.btn-start svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* PROGRESS */
+.progress-wrap{margin-bottom:2rem}
+.progress-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:8px}
+.progress-meta strong{color:var(--navy);font-weight:500}
+.progress-track{height:4px;background:var(--cream-dark);border-radius:2px;overflow:hidden}
+.progress-bar{height:4px;background:var(--gold);border-radius:2px;transition:width 0.5s cubic-bezier(.4,0,.2,1)}
+.steps-dots{display:flex;gap:6px;margin-top:10px}
+.dot{flex:1;height:3px;border-radius:2px;background:var(--cream-dark);transition:background 0.3s}
+.dot.done{background:var(--gold)}
+.dot.active{background:var(--navy)}
+/* STEPS */
+.form-screen{display:none}
+.form-screen.active{display:block}
+.step{display:none;animation:fadeIn 0.35s ease}
+.step.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* SECTION LABEL */
+.section-label{display:flex;align-items:center;gap:8px;font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1.5rem;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.section-label .icon{width:26px;height:26px;background:var(--gold-pale);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.section-label .icon svg{width:13px;height:13px;stroke:var(--gold);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* QUESTION BLOCK */
+.q-block{margin-bottom:1.5rem}
+.q-block label.q-label{display:block;font-size:14px;font-weight:500;color:var(--navy);margin-bottom:8px;line-height:1.5}
+.q-block label.q-label .req{color:#c0392b;margin-left:2px;font-weight:400}
+.q-block .hint{font-size:12px;color:var(--text-muted);margin-top:6px;line-height:1.6;font-style:italic}
+/* INPUTS */
+input[type=text],input[type=time],textarea,select{width:100%;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text-dark);background:#fff;border:1px solid var(--border-mid);border-radius:var(--radius);padding:10px 14px;transition:border-color 0.2s,box-shadow 0.2s;outline:none;-webkit-appearance:none}
+input[type=text]:focus,input[type=time]:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,0.15)}
+textarea{min-height:88px;resize:vertical;line-height:1.6}
+/* PILLS */
+.pill-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.pill-group label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-mid);background:#fff;border:1px solid var(--border-mid);border-radius:99px;padding:6px 14px;cursor:pointer;transition:all 0.18s;user-select:none}
+.pill-group label:hover{border-color:var(--gold);color:var(--navy)}
+.pill-group input{display:none}
+.pill-group label.selected{background:var(--navy);border-color:var(--navy);color:#fff}
+/* MEAL CARD */
+.meal-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem;margin-bottom:12px;box-shadow:var(--shadow-sm)}
+.meal-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.meal-num{font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);background:var(--gold-pale);padding:3px 10px;border-radius:99px}
+.meal-delete{background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:18px;padding:2px 6px;border-radius:6px;transition:color 0.2s,background 0.2s;line-height:1}
+.meal-delete:hover{color:#c0392b;background:#fdecea}
+.meal-row{display:grid;grid-template-columns:1fr 130px;gap:10px;margin-bottom:10px}
+.meal-row-3{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.field-label{font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;display:block;margin-bottom:5px}
+/* ADD BTN */
+.add-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--navy);background:none;border:1px dashed var(--border-mid);border-radius:var(--radius);padding:11px;cursor:pointer;transition:all 0.18s;margin-top:4px}
+.add-btn:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-pale)}
+.add-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+/* SUMMARY */
+.summary-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
+.summary-section{padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
+.summary-section:last-child{border-bottom:none}
+.summary-section h3{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px}
+.summary-row{display:flex;gap:10px;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(11,31,58,0.05)}
+.summary-row:last-child{border-bottom:none}
+.summary-key{color:var(--text-muted);min-width:130px;flex-shrink:0}
+.summary-val{color:var(--text-dark);line-height:1.5}
+/* NAV */
+.nav-bar{display:flex;align-items:center;justify-content:space-between;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border);gap:12px}
+.btn-back{display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:400;color:var(--text-mid);background:none;border:1px solid var(--border-mid);border-radius:var(--radius);padding:10px 18px;cursor:pointer;transition:all 0.18s}
+.btn-back:hover:not(:disabled){border-color:var(--navy);color:var(--navy)}
+.btn-back:disabled{opacity:0.3;cursor:not-allowed}
+.btn-next{display:flex;align-items:center;justify-content:center;gap:7px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:#fff;background:var(--navy);border:1px solid var(--navy);border-radius:var(--radius);padding:10px 22px;cursor:pointer;transition:all 0.18s;flex:1;max-width:220px}
+.btn-next:hover{background:var(--navy-light);border-color:var(--navy-light)}
+.btn-submit{background:var(--green);border-color:var(--green)}
+.btn-submit:hover{background:var(--green-mid);border-color:var(--green-mid)}
+.step-counter{font-size:12px;color:var(--text-muted)}
+/* SUCCESS */
+.success-screen{display:none;animation:fadeIn 0.5s ease}
+.success-card{background:var(--navy);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin-bottom:1.5rem;position:relative;overflow:hidden}
+.success-card::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(201,168,76,0.08)}
+.success-icon-wrap{width:64px;height:64px;margin:0 auto 1.25rem;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.success-icon-wrap svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.success-card h2{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:#fff;margin-bottom:6px;line-height:1.3}
+.success-gold-line{width:40px;height:3px;background:var(--gold);border-radius:2px;margin:12px auto}
+.success-body{background:#fff;border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border)}
+.success-body p{font-size:14px;color:var(--text-mid);line-height:1.8}
+.success-footer{text-align:center;margin-top:1rem;font-size:12px;color:var(--text-muted)}
+/* CHECK CARD */
+.check-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-top:1rem}
+.check-card h4{font-size:13px;font-weight:500;color:var(--navy);margin-bottom:10px}
+@media(max-width:520px){
+  .meal-row{grid-template-columns:1fr}
+  .meal-row-3{grid-template-columns:1fr}
+  .page{padding:1.25rem 1rem 3rem}
+  .welcome-card h1{font-size:22px}
+}
+</style>
 </head>
 <body>
-<div class="header">
-  <div class="header-bar"></div>
-  <div>
-    <div class="header-title">NEXUS CLIN</div>
-    <div class="header-sub">Anamnese Nutricional</div>
+<div class="page">
+  <!-- BRAND HEADER -->
+  <div class="brand-header">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6L12 2z"/></svg>
+    </div>
+    <div>
+      <div class="brand-title">NEXUS CLIN</div>
+      <div class="brand-sub">Centro de Performance Metabólica &amp; Longevidade</div>
+    </div>
   </div>
-</div>
-<div class="progress-wrap" id="progressBar">
-  <div class="progress-labels">
-    <span class="progress-label active" id="lbl-1">Rotina</span>
-    <span class="progress-label" id="lbl-2">Preferências</span>
-    <span class="progress-label" id="lbl-3">Refeições</span>
-    <span class="progress-label" id="lbl-4">Semana/FDS</span>
-    <span class="progress-label" id="lbl-5">Extras</span>
+
+  <!-- ══ TELA 0: BOAS-VINDAS ══ -->
+  <div class="welcome-screen" id="welcomeScreen">
+    <div class="welcome-card">
+      <div class="badge-green">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        Avaliação Nutricional
+      </div>
+      <h1>Para que sua consulta nutricional seja ainda mais personalizada e estratégica.</h1>
+      <p>As informações preenchidas são muito importantes para entendermos melhor sua rotina, hábitos alimentares, objetivos, dificuldades e necessidades individuais.</p>
+      <p>Assim, conseguimos montar um plano alimentar realmente alinhado ao seu perfil e à sua realidade. 💚</p>
+    </div>
+    <div class="name-input-wrap">
+      <label>Para começar, digite seu nome completo</label>
+      <input class="name-input-big" type="text" id="nome_boas_vindas" placeholder="Seu nome completo..." autocomplete="name">
+      <button class="btn-start" onclick="iniciarFormulario()">
+        Iniciar minha anamnese
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
   </div>
-  <div class="progress-track">
-    <div class="progress-fill" id="progressFill" style="width:20%"></div>
-  </div>
-</div>
-<div id="navBar">
-  <div>
-    <div class="nav-step-info" id="navStepInfo">Passo 1 de 5</div>
-    <div class="nav-step-name" id="navStepName">Rotina Diária</div>
-  </div>
-  <div style="display:flex;gap:8px;align-items:center">
-    <button class="btn-back" id="btnBack" onclick="prevStep()" style="display:none">&#8592; Voltar</button>
-    <button class="btn-next" id="btnNext" onclick="nextStep()">Próximo &#8594;</button>
-  </div>
-</div>
-<!-- IDENTIFICAÇÃO -->
-<div class="q-block" style="margin-bottom:1.5rem">
-  <label class="q-label" for="nome_paciente">Nome completo <span class="req">*</span></label>
-  <input type="text" id="nome_paciente" placeholder="Digite seu nome completo" style="font-size:15px;padding:12px 14px">
-</div>
-<!-- INTRO CARD -->
-<div class="content">
-  <div class="step active" id="step1">
-    <div class="step-title">Rotina Diária</div>
-    <div class="step-desc">Este questionário é a base do seu plano alimentar personalizado. As informações que você compartilhar aqui — sua rotina, preferências, horários e hábitos — são o que nos permite criar uma proposta real, que funciona para a sua vida. Leve o tempo que precisar e responda com o máximo de detalhes.</div>
-    <div class="card">
-      <div class="card-label">Quem prepara suas refeições?</div>
-      <div class="radio-group" id="preparo">
-        <span class="radio-opt" data-val="Eu mesmo(a)">Eu mesmo(a)</span>
-        <span class="radio-opt" data-val="Outra pessoa da casa">Outra pessoa da casa</span>
-        <span class="radio-opt" data-val="Marmita / Delivery">Marmita / Delivery</span>
-        <span class="radio-opt" data-val="Restaurante">Restaurante</span>
-        <span class="radio-opt" data-val="Misto">Misto</span>
+
+  <!-- ══ TELA FORMULÁRIO ══ -->
+  <div class="form-screen" id="formScreen">
+
+    <!-- PROGRESS -->
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span id="stepLabel">Etapa <strong>1</strong> de 5</span>
+        <span id="progressPct">20%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-bar" id="progressBar" style="width:20%"></div>
+      </div>
+      <div class="steps-dots" id="stepsDots">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-label">Pratica atividade física?</div>
-      <div class="radio-group" id="atividade">
-        <span class="radio-opt" data-val="Não">Não</span>
-        <span class="radio-opt" data-val="Sim – musculação">Sim – musculação</span>
-        <span class="radio-opt" data-val="Sim – aeróbico">Sim – aeróbico</span>
-        <span class="radio-opt" data-val="Sim – misto">Sim – misto</span>
-        <span class="radio-opt" data-val="Sim – esporte">Sim – esporte</span>
+
+    <!-- STEP 1: ROTINA -->
+    <div class="step active" id="step1">
+      <div class="section-label">
+        <div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        Rotina diária
+      </div>
+      <div class="q-block">
+        <label class="q-label">Quem prepara as suas refeições? <span class="req">*</span></label>
+        <div class="pill-group" id="prep-group">
+          <label><input type="radio" name="preparo" value="Eu mesmo(a)"><span>Eu mesmo(a)</span></label>
+          <label><input type="radio" name="preparo" value="Familiar"><span>Familiar</span></label>
+          <label><input type="radio" name="preparo" value="Empregada doméstica"><span>Empregada doméstica</span></label>
+          <label><input type="radio" name="preparo" value="Restaurante / delivery"><span>Restaurante / delivery</span></label>
+          <label><input type="radio" name="preparo" value="Misto"><span>Misto</span></label>
+        </div>
+      </div>
+      <div class="q-block">
+        <label class="q-label">Você estuda ou trabalha? De que horas até que horas? <span class="req">*</span></label>
+        <div class="pill-group" style="margin-bottom:12px" id="ativ-group">
+          <label><input type="radio" name="atividade" value="Trabalho"><span>Trabalho</span></label>
+          <label><input type="radio" name="atividade" value="Estudo"><span>Estudo</span></label>
+          <label><input type="radio" name="atividade" value="Ambos"><span>Ambos</span></label>
+          <label><input type="radio" name="atividade" value="Nenhum no momento"><span>Nenhum no momento</span></label>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><span class="field-label">Horário de início</span><input type="time" id="horario_inicio"></div>
+          <div><span class="field-label">Horário de término</span><input type="time" id="horario_fim"></div>
+        </div>
+      </div>
+      <div class="q-block">
+        <label class="q-label" for="rotina_detalhe">Descreva sua rotina diária de forma detalhada <span class="req">*</span></label>
+        <textarea id="rotina_detalhe" placeholder="Ex: acordo às 6h, tomo banho, saio para o trabalho às 7h30, almoço na empresa às 12h, volto às 18h, chego em casa às 19h, janto e durmo às 23h..."></textarea>
+        <p class="hint">Inclua: horário de acordar, deslocamentos, pausas, atividade física, chegada em casa, hora de dormir.</p>
       </div>
     </div>
-    <div class="card">
-      <div class="card-label">Horário de trabalho / ocupação</div>
-      <div class="row-2">
-        <div><div class="field-label">Início</div><input type="time" id="horario_inicio"></div>
-        <div><div class="field-label">Fim</div><input type="time" id="horario_fim"></div>
+
+    <!-- STEP 2: PREFERÊNCIAS -->
+    <div class="step" id="step2">
+      <div class="section-label">
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        Preferências alimentares
+      </div>
+      <div class="q-block">
+        <label class="q-label" for="nao_gosta">Alimentos que <u>não gosta</u> e não quer na dieta <span class="req">*</span></label>
+        <textarea id="nao_gosta" placeholder="Ex: não gosto de brócolis, fígado, peixe, quiabo..."></textarea>
+      </div>
+      <div class="q-block">
+        <label class="q-label" for="gosta">O que você <u>adora</u> comer? Saudável e as &quot;gordices&quot; também! <span class="req">*</span></label>
+        <textarea id="gosta" placeholder="Ex: adoro arroz com feijão, carne bovina, frango, mas também chocolate, pizza, sorvete..."></textarea>
+        <p class="hint">Seja honesto(a) — isso ajuda a montar um plano que você consiga seguir de verdade.</p>
+      </div>
+      <div class="q-block">
+        <label class="q-label">Você costuma jantar comida ou opções mais leves?</label>
+        <div class="pill-group" id="jantar-group">
+          <label><input type="radio" name="jantar_tipo" value="Comida completa"><span>Comida completa</span></label>
+          <label><input type="radio" name="jantar_tipo" value="Lanche leve"><span>Lanche leve</span></label>
+          <label><input type="radio" name="jantar_tipo" value="Sopa / caldos"><span>Sopa / caldos</span></label>
+          <label><input type="radio" name="jantar_tipo" value="Varia muito"><span>Varia muito</span></label>
+          <label><input type="radio" name="jantar_tipo" value="Pulo o jantar"><span>Pulo o jantar</span></label>
+        </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-label">Descreva sua rotina diária</div>
-      <textarea id="rotina_detalhe" placeholder="Ex: Acordo às 6h, trabalho das 8h às 18h, tenho 1h de almoço..."></textarea>
-    </div>
-  </div>
-  <div class="step" id="step2">
-    <div class="step-title">Preferências Alimentares</div>
-    <div class="step-desc">Seus gostos e aversões são fundamentais para um plano que você realmente consiga seguir.</div>
-    <div class="card">
-      <div class="card-label">O que você NÃO gosta de comer?</div>
-      <textarea id="nao_gosta" placeholder="Ex: fígado, couve, brócolis, feijão preto..."></textarea>
-    </div>
-    <div class="card">
-      <div class="card-label">O que você ADORA comer?</div>
-      <textarea id="gosta" placeholder="Ex: frango grelhado, arroz, frutas, iogurte..."></textarea>
-    </div>
-    <div class="card">
-      <div class="card-label">Como é o seu jantar habitualmente?</div>
-      <div class="radio-group" id="jantar_tipo">
-        <span class="radio-opt" data-val="Refeição completa">Refeição completa</span>
-        <span class="radio-opt" data-val="Refeição leve">Refeição leve</span>
-        <span class="radio-opt" data-val="Só um lanche">Só um lanche</span>
-        <span class="radio-opt" data-val="Quase não janto">Quase não janto</span>
-        <span class="radio-opt" data-val="Varia muito">Varia muito</span>
+
+    <!-- STEP 3: REFEIÇÕES -->
+    <div class="step" id="step3">
+      <div class="section-label">
+        <div class="icon"><svg viewBox="0 0 24 24"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg></div>
+        Alimentação em um dia típico
+      </div>
+      <p style="font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:1.25rem">Descreva <strong style="color:var(--navy)">todas</strong> as refeições, lanches e beliscadas. Inclua horário e local de cada uma.</p>
+      <div id="refeicoes-container"></div>
+      <button class="add-btn" onclick="addRefeicao()" type="button">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Adicionar refeição
+      </button>
+      <div class="check-card" style="margin-top:1.5rem">
+        <h4>Infraestrutura no local de trabalho / estudo</h4>
+        <div class="pill-group" id="infra-group">
+          <label><input type="checkbox" name="infra" value="Geladeira / frigobar"><span>🧈 Geladeira / frigobar</span></label>
+          <label><input type="checkbox" name="infra" value="Micro-ondas"><span>Micro-ondas</span></label>
+          <label><input type="checkbox" name="infra" value="Nenhum"><span>Nenhum</span></label>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="step" id="step3">
-    <div class="step-title">Refeições do Dia</div>
-    <div class="step-desc">Registre todas as suas refeições de um dia típico — incluindo pequenos beliscos.</div>
-    <div id="refeicoes-container"></div>
-    <button class="btn-add-meal" onclick="addMeal()">+ Adicionar refeição</button>
-  </div>
-  <div class="step" id="step4">
-    <div class="step-title">Semana e Final de Semana</div>
-    <div class="step-desc">Entender como é seu fim de semana nos ajuda a criar um plano mais realista.</div>
-    <div class="card">
-      <div class="card-label">Sua alimentação muda no final de semana?</div>
-      <div class="radio-group" id="fds_muda">
-        <span class="radio-opt" data-val="Não, é igual">Não, é igual</span>
-        <span class="radio-opt" data-val="Sim, como mais">Sim, como mais</span>
-        <span class="radio-opt" data-val="Sim, como pior">Sim, como pior</span>
-        <span class="radio-opt" data-val="Depende do final de semana">Depende</span>
+
+    <!-- STEP 4: FINAL DE SEMANA -->
+    <div class="step" id="step4">
+      <div class="section-label">
+        <div class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        Final de semana
+      </div>
+      <div class="q-block">
+        <label class="q-label">Sua alimentação no final de semana muda muito?</label>
+        <div class="pill-group" id="fds-group">
+          <label><input type="radio" name="fds_muda" value="Sim, muda bastante" onchange="toggleFds(true)"><span>Sim, muda bastante</span></label>
+          <label><input type="radio" name="fds_muda" value="Muda um pouco" onchange="toggleFds(false)"><span>Muda um pouco</span></label>
+          <label><input type="radio" name="fds_muda" value="Não, é praticamente igual" onchange="toggleFds(false)"><span>Não, é praticamente igual</span></label>
+        </div>
+      </div>
+      <div id="fds-detail" style="display:none">
+        <div class="q-block">
+          <label class="q-label" for="fds_desc">Descreva sua alimentação no final de semana</label>
+          <textarea id="fds_desc" style="min-height:110px" placeholder="Ex: pulo o café da manhã no sábado, almoço fora com a família, à noite como pizza, bebo cerveja..."></textarea>
+          <p class="hint">Mencione: pulos de refeição, refeições fora, bebidas alcoólicas, fast food.</p>
+        </div>
+      </div>
+      <div class="q-block">
+        <label class="q-label" for="obs_extras">Alguma informação adicional sobre sua alimentação ou saúde?</label>
+        <textarea id="obs_extras" placeholder="Ex: tenho intolerância à lactose, sou vegetariano(a), uso suplementos, já fiz outras dietas..."></textarea>
       </div>
     </div>
-    <div class="card">
-      <div class="card-label">Descreva como é sua alimentação no FDS</div>
-      <textarea id="fds_desc" placeholder="Ex: Saio para comer fora, faço churrasco, bebo álcool..."></textarea>
-    </div>
-    <div class="card">
-      <div class="card-label">Infraestrutura disponível (marque os que tem)</div>
-      <div class="check-group" id="infra">
-        <span class="check-opt" data-val="Fogão">Fogão</span>
-        <span class="check-opt" data-val="Forno">Forno</span>
-        <span class="check-opt" data-val="Micro-ondas">Micro-ondas</span>
-        <span class="check-opt" data-val="Air fryer">Air fryer</span>
-        <span class="check-opt" data-val="Geladeira">Geladeira</span>
-        <span class="check-opt" data-val="Freezer">Freezer</span>
-        <span class="check-opt" data-val="Liquidificador">Liquidificador</span>
-        <span class="check-opt" data-val="Balança">Balança</span>
+
+    <!-- STEP 5: REVISÃO -->
+    <div class="step" id="step5">
+      <div class="section-label">
+        <div class="icon"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        Revisão das respostas
       </div>
+      <div class="summary-card" id="summaryCard"></div>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:1rem;line-height:1.6">Se precisar corrigir algo, utilize o botão <strong>Voltar</strong>.</p>
+    </div>
+
+    <!-- NAV -->
+    <div class="nav-bar" id="navBar">
+      <button class="btn-back" id="btnBack" onclick="changeStep(-1)" disabled type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Voltar
+      </button>
+      <span class="step-counter" id="stepCounter">1 / 5</span>
+      <button class="btn-next" id="btnNext" onclick="changeStep(1)" type="button">
+        Próximo
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+
+  </div><!-- /form-screen -->
+
+  <!-- ══ TELA FINAL: SUCESSO ══ -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-card">
+      <div class="success-icon-wrap">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="badge-green" style="margin-bottom:10px">Enviado com sucesso ✅</div>
+      <h2 id="success_titulo">Anamnese recebida!</h2>
+      <div class="success-gold-line"></div>
+    </div>
+    <div class="success-body">
+      <p id="success_msg"></p>
+    </div>
+    <div class="success-footer">
+      NEXUS CLIN · Livramento-PB · Sosthenes dos Santos Alves · COREN-PB 568176
     </div>
   </div>
-  <div class="step" id="step5">
-    <div class="step-title">Observações Finais</div>
-    <div class="step-desc">Há algo mais que queira que a nutricionista saiba antes de elaborar seu plano?</div>
-    <div class="card">
-      <div class="card-label">Observações, objetivos ou informações extras</div>
-      <textarea id="obs_extras" rows="6" placeholder="Ex: Tenho intolerância a lactose, quero emagrecer 5kg, tenho gastrite..."></textarea>
-    </div>
-  </div>
-</div>
-<div id="successScreen">
-  <div class="success-icon">&#10003;</div>
-  <div class="success-title">Anamnese enviada!</div>
-  <div class="success-msg">Obrigado, <strong id="nome_conclusao"></strong>!<br><br>
-Suas informações foram enviadas com sucesso para nossa equipe, que irá montar o seu plano alimentar personalizado para ser apresentado na sua próxima consulta.<br><br>
-Caso tenha alguma dúvida, fale conosco pelo WhatsApp.<br><br>
-<span style="font-size:12px;color:var(--text-muted)">Obrigado por confiar na NEXUS CLIN. Estamos aqui para essa jornada com você.</span></div>
-</div>
-<div class="footer">NEXUS CLIN &middot; Livramento-PB &middot; Sosthenes dos Santos Alves &middot; COREN-PB 568176</div>
+
+</div><!-- /page -->
+
 <script>
-  var currentStep = 1;
-  var TOTAL_STEPS = 5;
-  var stepNames = ['Rotina Diária','Preferências Alimentares','Refeições do Dia','Semana e FDS','Observações Finais'];
-  var mealCount = 0;
-  var mealNames = ['Café da manhã','Lanche da manhã','Almoço','Lanche da tarde','Jantar','Ceia'];
-  window.addEventListener('DOMContentLoaded', function() {
-    addMeal();
-    updateNav();
-    initRadios();
-    initChecks();
+let currentStep = 1;
+const totalSteps = 5;
+let refeicaoCount = 0;
+let nomePaciente = '';
+
+// ── BOAS-VINDAS ──
+function iniciarFormulario() {
+  const nome = document.getElementById('nome_boas_vindas').value.trim();
+  if (!nome) {
+    document.getElementById('nome_boas_vindas').focus();
+    document.getElementById('nome_boas_vindas').style.borderColor = '#c0392b';
+    return;
+  }
+  nomePaciente = nome;
+  document.getElementById('welcomeScreen').style.display = 'none';
+  document.getElementById('formScreen').classList.add('active');
+  if (refeicaoCount === 0) addRefeicao();
+}
+
+document.getElementById('nome_boas_vindas').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') iniciarFormulario();
+});
+
+// ── PILLS ──
+function initPills() {
+  document.querySelectorAll('.pill-group').forEach(group => {
+    group.querySelectorAll('label').forEach(lbl => {
+      const inp = lbl.querySelector('input');
+      if (!inp) return;
+      inp.addEventListener('change', () => {
+        if (inp.type === 'radio') {
+          group.querySelectorAll('label').forEach(l => l.classList.remove('selected'));
+          lbl.classList.add('selected');
+        } else {
+          lbl.classList.toggle('selected', inp.checked);
+        }
+      });
+    });
   });
-  function initRadios() {
-    document.querySelectorAll('.radio-group').forEach(function(group) {
-      group.querySelectorAll('.radio-opt').forEach(function(opt) {
-        opt.addEventListener('click', function() {
-          group.querySelectorAll('.radio-opt').forEach(function(o) { o.classList.remove('selected'); });
-          opt.classList.add('selected');
-        });
-      });
-    });
+}
+initPills();
+
+// ── MEAL ──
+function addRefeicao() {
+  const n = ++refeicaoCount;
+  const container = document.getElementById('refeicoes-container');
+  const div = document.createElement('div');
+  div.className = 'meal-card';
+  div.id = 'meal-' + n;
+  div.innerHTML = `
+    <div class="meal-card-header">
+      <span class="meal-num">Refeição ${n}</span>
+      ${n > 1 ? '<button class="meal-delete" onclick="this.closest(\'  .meal-card\').remove()" type="button">×</button>' : ''}
+    </div>
+    <div class="meal-row">
+      <div><span class="field-label">Nome da refeição</span>
+        <input type="text" class="ref-nome" placeholder="Ex: Café da manhã, Almoço..."></div>
+      <div><span class="field-label">Horário</span>
+        <input type="time" class="ref-hora"></div>
+    </div>
+    <div><span class="field-label">O que comeu / bebeu?</span>
+      <textarea class="ref-desc" placeholder="Descreva tudo: Ex: 2 ovos, pão, café com leite sem açúcar..."></textarea>
+    </div>
+    <div class="meal-row-3">
+      <div><span class="field-label">Local</span>
+        <input type="text" class="ref-local" placeholder="Ex: casa, trabalho, rua"></div>
+      <div><span class="field-label">Beliscou depois?</span>
+        <input type="text" class="ref-belisco" placeholder="Ex: bolachas, café"></div>
+    </div>`;
+  container.appendChild(div);
+  div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ── FDS ──
+function toggleFds(show) {
+  document.getElementById('fds-detail').style.display = show ? 'block' : 'none';
+}
+
+// ── NAVIGATION ──
+function changeStep(dir) {
+  document.querySelectorAll('.step')[currentStep - 1].classList.remove('active');
+  currentStep += dir;
+  if (currentStep > totalSteps) { submitForm(); return; }
+  if (currentStep === totalSteps) buildSummary();
+  document.querySelectorAll('.step')[currentStep - 1].classList.add('active');
+  updateNav();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateNav() {
+  const pct = Math.round((currentStep / totalSteps) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('stepLabel').innerHTML = 'Etapa <strong>' + currentStep + '</strong> de ' + totalSteps;
+  document.getElementById('stepCounter').textContent = currentStep + ' / ' + totalSteps;
+  document.getElementById('btnBack').disabled = currentStep === 1;
+  const dots = document.querySelectorAll('.dot');
+  dots.forEach((d, i) => {
+    d.className = 'dot';
+    if (i < currentStep - 1) d.classList.add('done');
+    if (i === currentStep - 1) d.classList.add('active');
+  });
+  const btn = document.getElementById('btnNext');
+  if (currentStep === totalSteps) {
+    btn.className = 'btn-next btn-submit';
+    btn.innerHTML = 'Enviar anamnese <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
+  } else {
+    btn.className = 'btn-next';
+    btn.innerHTML = 'Próximo <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
   }
-  function initChecks() {
-    document.querySelectorAll('.check-group').forEach(function(group) {
-      group.querySelectorAll('.check-opt').forEach(function(opt) {
-        opt.addEventListener('click', function() { opt.classList.toggle('selected'); });
-      });
-    });
-  }
-  function radioVal(groupId) {
-    var sel = document.querySelector('#' + groupId + ' .radio-opt.selected');
-    return sel ? sel.dataset.val : '';
-  }
-  function checkVals(groupId) {
-    return Array.from(document.querySelectorAll('#' + groupId + ' .check-opt.selected')).map(function(o) { return o.dataset.val; }).join(', ');
-  }
-  function updateNav() {
-    document.getElementById('navStepInfo').textContent = 'Passo ' + currentStep + ' de ' + TOTAL_STEPS;
-    document.getElementById('navStepName').textContent = stepNames[currentStep - 1];
-    document.getElementById('btnBack').style.display = currentStep > 1 ? 'inline-block' : 'none';
-    document.getElementById('btnNext').textContent = currentStep === TOTAL_STEPS ? 'Enviar ✓' : 'Próximo →';
-    var pct = (currentStep / TOTAL_STEPS) * 100;
-    document.getElementById('progressFill').style.width = pct + '%';
-    for (var i = 1; i <= TOTAL_STEPS; i++) {
-      document.getElementById('lbl-' + i).classList.toggle('active', i === currentStep);
-    }
-  }
-  function nextStep() {
-    if (currentStep === TOTAL_STEPS) { submitForm(); return; }
-    document.getElementById('step' + currentStep).classList.remove('active');
-    currentStep++;
-    document.getElementById('step' + currentStep).classList.add('active');
-    updateNav();
-    window.scrollTo(0, 0);
-  }
-  function prevStep() {
-    if (currentStep === 1) return;
-    document.getElementById('step' + currentStep).classList.remove('active');
-    currentStep--;
-    document.getElementById('step' + currentStep).classList.add('active');
-    updateNav();
-    window.scrollTo(0, 0);
-  }
-  function addMeal() {
-    mealCount++;
-    var idx = mealCount;
-    var suggestedName = mealNames[idx - 1] || ('Refeição ' + idx);
-    var div = document.createElement('div');
-    div.className = 'meal-card';
-    div.innerHTML = '<div class="meal-card-header"><span class="meal-num">' + idx + '</span><span>' + suggestedName + '</span></div><button class="btn-remove-meal" onclick="removeMeal(this)" title="Remover">&times;</button><div class="row-2" style="margin-bottom:10px"><div><div class="field-label">Nome da refeição</div><input type="text" class="ref-nome" placeholder="Ex: Almoço" value="' + suggestedName + '"></div><div><div class="field-label">Horário</div><input type="time" class="ref-hora"></div></div><div style="margin-bottom:10px"><div class="field-label">O que comeu / bebeu?</div><textarea class="ref-desc" rows="2" placeholder="Ex: Arroz, feijão, frango grelhado, salada..."></textarea></div><div class="row-2"><div><div class="field-label">Local</div><input type="text" class="ref-local" placeholder="Ex: casa, trabalho, rua"></div><div><div class="field-label">Beliscou algo depois?</div><input type="text" class="ref-belisco" placeholder="Ex: biscoito, fruta, nada"></div></div>';
-    document.getElementById('refeicoes-container').appendChild(div);
-  }
-  function removeMeal(btn) {
-    var card = btn.closest('.meal-card');
-    if (document.querySelectorAll('#refeicoes-container .meal-card').length > 1) { card.remove(); }
-  }
-  async function submitForm() {
-  document.getElementById('nome_conclusao').textContent =
-    document.getElementById('nome_paciente').value || 'paciente';
-    var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw4QHjpUuGYMM4DbeY2HnBugNCqzZaX97oO8ZMRqnN76Bsig_iCDBEtmRs_gRxtvMgmzw/exec';
-    var refeicoes = Array.from(document.querySelectorAll('#refeicoes-container .meal-card')).map(function(m) {
-      return {
-        nome: m.querySelector('.ref-nome').value || '',
-        hora: m.querySelector('.ref-hora').value || '',
-        desc: m.querySelector('.ref-desc').value || '',
-        local: m.querySelector('.ref-local').value || '',
-        belisco: m.querySelector('.ref-belisco').value || ''
-      };
-    });
-    var payload = {
-      nome_paciente: document.getElementById('nome_paciente').value,
+}
+
+// ── SUMMARY ──
+function val(id) { const el = document.getElementById(id); return el ? (el.value || '—') : '—'; }
+function radioVal(name) { const el = document.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : '—'; }
+function checkVals(name) { return [...document.querySelectorAll('input[name="' + name + '"]:checked')].map(e => e.value).join(', ') || '—'; }
+
+function buildSummary() {
+  const meals = [...document.querySelectorAll('#refeicoes-container .meal-card')];
+  let mealsHtml = '';
+  meals.forEach(m => {
+    const nome = m.querySelector('.ref-nome').value || 'Sem nome';
+    const hora = m.querySelector('.ref-hora').value || '—';
+    const desc = m.querySelector('.ref-desc').value || '—';
+    const local = m.querySelector('.ref-local').value || '—';
+    mealsHtml += `<div class="summary-row"><span class="summary-key">${nome} (${hora})</span><span class="summary-val">${desc} — <em>${local}</em></span></div>`;
+  });
+  document.getElementById('summaryCard').innerHTML = `
+    <div class="summary-section"><h3>Paciente</h3>
+      <div class="summary-row"><span class="summary-key">Nome</span><span class="summary-val">${nomePaciente}</span></div>
+    </div>
+    <div class="summary-section"><h3>Rotina</h3>
+      <div class="summary-row"><span class="summary-key">Preparo</span><span class="summary-val">${radioVal('preparo')}</span></div>
+      <div class="summary-row"><span class="summary-key">Atividade</span><span class="summary-val">${radioVal('atividade')}</span></div>
+      <div class="summary-row"><span class="summary-key">Horário</span><span class="summary-val">${val('horario_inicio')} às ${val('horario_fim')}</span></div>
+      <div class="summary-row"><span class="summary-key">Rotina</span><span class="summary-val">${val('rotina_detalhe').substring(0, 120)}…</span></div>
+    </div>
+    <div class="summary-section"><h3>Preferências</h3>
+      <div class="summary-row"><span class="summary-key">Não gosta de</span><span class="summary-val">${val('nao_gosta').substring(0, 100)}</span></div>
+      <div class="summary-row"><span class="summary-key">Adora comer</span><span class="summary-val">${val('gosta').substring(0, 100)}</span></div>
+      <div class="summary-row"><span class="summary-key">Jantar</span><span class="summary-val">${radioVal('jantar_tipo')}</span></div>
+    </div>
+    <div class="summary-section"><h3>Refeições (${meals.length})</h3>${mealsHtml}</div>
+    <div class="summary-section"><h3>Final de semana</h3>
+      <div class="summary-row"><span class="summary-key">Muda?</span><span class="summary-val">${radioVal('fds_muda')}</span></div>
+      <div class="summary-row"><span class="summary-key">Infraestrutura</span><span class="summary-val">${checkVals('infra')}</span></div>
+      <div class="summary-row"><span class="summary-key">Observações</span><span class="summary-val">${val('obs_extras').substring(0, 100)}</span></div>
+    </div>`;
+}
+
+// ── SUBMIT ──
+async function submitForm() {
+  const APPS_SCRIPT_URL = 'COLE_SUA_URL_DO_APPS_SCRIPT_AQUI';
+
+  const refeicoes = [...document.querySelectorAll('#refeicoes-container .meal-card')].map(m => ({
+    nome: m.querySelector('.ref-nome').value || '',
+    hora: m.querySelector('.ref-hora').value || '',
+    desc: m.querySelector('.ref-desc').value || '',
+    local: m.querySelector('.ref-local').value || '',
+    belisco: m.querySelector('.ref-belisco').value || ''
+  }));
+
+  const payload = {
+    nome_paciente: nomePaciente,
     preparo: radioVal('preparo'),
-      atividade: radioVal('atividade'),
-      horario_inicio: document.getElementById('horario_inicio').value,
-      horario_fim: document.getElementById('horario_fim').value,
-      rotina_detalhe: document.getElementById('rotina_detalhe').value,
-      nao_gosta: document.getElementById('nao_gosta').value,
-      gosta: document.getElementById('gosta').value,
-      jantar_tipo: radioVal('jantar_tipo'),
-      refeicoes: refeicoes,
-      infra: checkVals('infra'),
-      fds_muda: radioVal('fds_muda'),
-      fds_desc: document.getElementById('fds_desc').value,
-      obs_extras: document.getElementById('obs_extras').value
-    };
-    var btn = document.getElementById('btnNext');
-    btn.disabled = true;
-    btn.innerHTML = 'Enviando…';
-    try {
-      await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-      document.querySelectorAll('.step').forEach(function(s) { s.classList.remove('active'); });
-      document.getElementById('navBar').style.display = 'none';
-      document.getElementById('progressBar').parentElement.parentElement.style.display = 'none';
-      document.getElementById('successScreen').style.display = 'block';
-    } catch(err) {
-      btn.disabled = false;
-      btn.innerHTML = 'Tentar novamente';
-      alert('Erro ao enviar. Verifique sua conexão e tente novamente.');
-    }
+    atividade: radioVal('atividade'),
+    horario_inicio: val('horario_inicio'),
+    horario_fim: val('horario_fim'),
+    rotina_detalhe: val('rotina_detalhe'),
+    nao_gosta: val('nao_gosta'),
+    gosta: val('gosta'),
+    jantar_tipo: radioVal('jantar_tipo'),
+    refeicoes: refeicoes,
+    infra: checkVals('infra'),
+    fds_muda: radioVal('fds_muda'),
+    fds_desc: val('fds_desc'),
+    obs_extras: val('obs_extras')
+  };
+
+  const btn = document.getElementById('btnNext');
+  btn.disabled = true;
+  btn.innerHTML = 'Enviando…';
+
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    // TELA FINAL
+    document.getElementById('formScreen').classList.remove('active');
+    document.getElementById('success_titulo').textContent = nomePaciente + ', recebemos sua anamnese! ✅';
+    document.getElementById('success_msg').innerHTML =
+      'Obrigado por preencher todas as informações com atenção.<br><br>' +
+      'Esses dados serão muito importantes para que possamos estruturar um plano alimentar mais individualizado, estratégico e alinhado aos seus objetivos. 💚<br><br>' +
+      'Suas informações foram enviadas para nossa equipe, que irá montar o seu plano alimentar personalizado para ser apresentado na sua próxima consulta.<br><br>' +
+      'Um dia antes da sua consulta, enviaremos um lembrete com todas as orientações necessárias. 😊';
+    document.getElementById('successScreen').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) {
+    btn.disabled = false;
+    btn.innerHTML = 'Tentar novamente';
+    alert('Erro ao enviar. Verifique sua conexão e tente novamente.');
   }
+}
 </script>
 </body>
 </html>
